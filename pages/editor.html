@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AM eBay Listing Assistant Editor</title>
+    <style>
+      :root {
+        font-family: Arial, Helvetica, sans-serif;
+        --blue: #1d4ed8;
+        --green: #15803d;
+        --red: #b42318;
+        --dark: #172033;
+        --muted: #667085;
+        --border: #d0d5dd;
+        --surface: #f8fafc;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--dark);
+        background: #eef2f7;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border);
+        background: white;
+      }
+
+      h1,
+      h2 {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      h2 {
+        font-size: 16px;
+      }
+
+      .screen {
+        display: none;
+      }
+
+      .screen.active {
+        display: block;
+      }
+
+      .lock-card {
+        width: min(420px, calc(100% - 32px));
+        margin: 80px auto;
+        padding: 20px;
+        border-radius: 16px;
+        background: white;
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+      }
+
+      .lock-form {
+        display: grid;
+        grid-template-columns: 1fr 44px;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      main {
+        display: grid;
+        gap: 16px;
+        padding: 20px;
+      }
+
+      .card {
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: white;
+      }
+
+      .grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      label {
+        display: grid;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      input,
+      textarea,
+      select,
+      button {
+        font: inherit;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 9px 10px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: white;
+      }
+
+      textarea {
+        min-height: 150px;
+        resize: vertical;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      button {
+        cursor: pointer;
+        border: 0;
+        border-radius: 8px;
+        background: var(--blue);
+        color: white;
+        padding: 9px 12px;
+        font-weight: 700;
+      }
+
+      button.secondary {
+        background: #eef2ff;
+        color: #1e3a8a;
+      }
+
+      button.success {
+        background: var(--green);
+      }
+
+      button.danger {
+        background: #fee4e2;
+        color: var(--red);
+      }
+
+      button.icon {
+        width: 44px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .image-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 12px;
+      }
+
+      .image-card {
+        display: grid;
+        gap: 6px;
+        padding: 8px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface);
+      }
+
+      .image-card img {
+        width: 100%;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 8px;
+        background: #e5e7eb;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      th,
+      td {
+        padding: 8px;
+        border-bottom: 1px solid #e4e7ec;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: var(--surface);
+      }
+
+      td input {
+        min-width: 110px;
+      }
+
+      .scroll {
+        overflow: auto;
+      }
+
+      .status {
+        color: var(--muted);
+        font-size: 13px;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <section id="lock-screen" class="screen">
+      <div class="lock-card">
+        <h1>Enter access password</h1>
+        <form id="lock-form" class="lock-form">
+          <input id="password" type="password" autocomplete="current-password" autofocus>
+          <button class="icon" type="submit" aria-label="Submit password"></button>
+        </form>
+        <div id="lock-status" class="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="editor-screen" class="screen">
+      <header>
+        <h1>AM eBay Listing Assistant</h1>
+        <div class="actions">
+          <button id="save-btn" class="secondary">Save</button>
+          <button id="copy-title-btn" class="secondary">Copy Title</button>
+          <button id="copy-description-btn" class="secondary">Copy Description</button>
+          <button id="copy-variants-btn" class="secondary">Copy Variants</button>
+          <button id="export-csv-btn" class="secondary">Export CSV</button>
+          <button id="list-btn" class="success">List It</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="card grid">
+          <h2>Listing data</h2>
+          <label>
+            Title
+            <input id="title" maxlength="80">
+          </label>
+          <label>
+            Description HTML
+            <textarea id="description"></textarea>
+          </label>
+          <div class="grid three">
+            <label>
+              Price
+              <input id="price" inputmode="decimal">
+            </label>
+            <label>
+              Quantity
+              <input id="quantity" type="number" min="0" step="1">
+            </label>
+            <label>
+              SKU prefix
+              <input id="sku-prefix">
+            </label>
+          </div>
+          <div class="grid three">
+            <label>
+              Category hints
+              <input id="category-hints">
+            </label>
+            <label>
+              Manual markup %
+              <input id="markup-percent" type="number" step="0.01" value="0">
+            </label>
+            <label>
+              Condition
+              <select id="condition">
+                <option>New</option>
+                <option>New with tags</option>
+                <option>New without tags</option>
+                <option>Used</option>
+              </select>
+            </label>
+          </div>
+          <div class="actions">
+            <button id="apply-markup-btn" class="secondary" type="button">Apply Markup</button>
+            <button id="add-specific-btn" class="secondary" type="button">Add Item Specific</button>
+          </div>
+          <div id="status" class="status" aria-live="polite"></div>
+        </section>
+
+        <section class="card grid">
+          <h2>Product images</h2>
+          <div id="images" class="image-grid"></div>
+        </section>
+
+        <section class="card grid">
+          <h2>Item specifics</h2>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Value</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="specifics-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card grid">
+          <h2>Variations</h2>
+          <div class="actions" id="dimension-actions"></div>
+          <div class="scroll">
+            <table>
+              <thead id="variations-head"></thead>
+              <tbody id="variations-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </section>
+
+    <script src="editor.js"></script>
+  </body>
+</html>

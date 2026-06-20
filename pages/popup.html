@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AM eBay Listing Assistant</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Arial, Helvetica, sans-serif;
+        --blue: #1d4ed8;
+        --dark: #172033;
+        --muted: #667085;
+        --border: #d0d5dd;
+        --surface: #f8fafc;
+      }
+
+      body {
+        margin: 0;
+        width: 360px;
+        color: var(--dark);
+        background: #fff;
+      }
+
+      .screen {
+        display: none;
+        padding: 16px;
+      }
+
+      .screen.active {
+        display: block;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+
+      .lock-title {
+        margin-bottom: 10px;
+      }
+
+      .lock-form {
+        display: grid;
+        grid-template-columns: 1fr 42px;
+        gap: 8px;
+      }
+
+      input,
+      button {
+        font: inherit;
+      }
+
+      input {
+        min-width: 0;
+        padding: 10px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      button {
+        cursor: pointer;
+        border: 0;
+        border-radius: 8px;
+        background: var(--blue);
+        color: white;
+        padding: 10px 12px;
+        font-weight: 700;
+      }
+
+      button.secondary {
+        background: #eef2ff;
+        color: #1e3a8a;
+      }
+
+      button.ghost {
+        background: transparent;
+        color: var(--muted);
+        padding-inline: 0;
+      }
+
+      .grid {
+        display: grid;
+        gap: 8px;
+      }
+
+      .meta {
+        background: var(--surface);
+        border: 1px solid #e4e7ec;
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .meta strong {
+        display: block;
+        color: var(--dark);
+        font-size: 13px;
+        margin-bottom: 4px;
+      }
+
+      .status {
+        min-height: 18px;
+        margin-top: 10px;
+        font-size: 12px;
+        color: var(--muted);
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <section id="lock-screen" class="screen">
+      <h1 class="lock-title">Enter access password</h1>
+      <form id="lock-form" class="lock-form">
+        <input id="password" type="password" autocomplete="current-password" autofocus>
+        <button type="submit" aria-label="Submit password"></button>
+      </form>
+      <div id="lock-status" class="status" aria-live="polite"></div>
+    </section>
+
+    <section id="tools-screen" class="screen">
+      <h1>AM eBay Listing Assistant</h1>
+      <div class="meta">
+        <strong id="product-title">No product loaded</strong>
+        <span id="product-summary">Open an AliExpress product page and scrape it.</span>
+      </div>
+      <div class="grid" style="margin-top: 12px;">
+        <button id="scrape-btn">Scrape Current Product</button>
+        <button id="editor-btn" class="secondary">Open Editor</button>
+        <button id="list-btn" class="secondary">List It</button>
+        <button id="lock-btn" class="ghost">Lock</button>
+      </div>
+      <div id="status" class="status" aria-live="polite"></div>
+    </section>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
