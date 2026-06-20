@@ -150,10 +150,22 @@
   }
 
   function getVariationStatus() {
+    const trackedVariationNode = queryAllDeep("[data-track], [_track], [track]", true).find((node) =>
+      /variations/i.test(
+        [
+          node.getAttribute("data-track"),
+          node.getAttribute("_track"),
+          node.getAttribute("track")
+        ]
+          .filter(Boolean)
+          .join(" ")
+      )
+    );
+
     const section =
       queryAllDeep(".summary__variations").find(Boolean) ||
       findByText("h2, h3, section, div", ["variations"], true) ||
-      queryAllDeep('[*_track*="VARIATIONS"]', true)[0] ||
+      trackedVariationNode ||
       null;
 
     const formatSelect = queryAllDeep('select[name="format"]', true)[0] || null;
