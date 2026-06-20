@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AM eBay Listing Assistant</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --brand: #123f8c;
+        --accent: #f3a51b;
+        --border: #d8dee8;
+        --muted: #667085;
+      }
+
+      body {
+        box-sizing: border-box;
+        width: 360px;
+        min-height: 250px;
+        margin: 0;
+        padding: 16px;
+        color: #101828;
+        font: 14px/1.4 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f8fafc;
+      }
+
+      h1 {
+        margin: 0 0 4px;
+        color: var(--brand);
+        font-size: 18px;
+      }
+
+      p {
+        margin: 0 0 12px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 650;
+      }
+
+      input,
+      button {
+        box-sizing: border-box;
+        width: 100%;
+        border-radius: 8px;
+        font: inherit;
+      }
+
+      input {
+        margin-bottom: 10px;
+        padding: 9px 10px;
+        border: 1px solid var(--border);
+        background: #fff;
+      }
+
+      button {
+        margin: 6px 0;
+        padding: 10px 12px;
+        border: 0;
+        color: #fff;
+        background: var(--brand);
+        cursor: pointer;
+        font-weight: 650;
+      }
+
+      button.secondary {
+        color: #101828;
+        border: 1px solid var(--border);
+        background: #fff;
+      }
+
+      button.warning {
+        color: #101828;
+        background: var(--accent);
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.6;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .card {
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #fff;
+      }
+
+      .status {
+        min-height: 20px;
+        margin-top: 10px;
+        color: var(--muted);
+        white-space: pre-wrap;
+      }
+
+      .product {
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 10px;
+        background: #eef4ff;
+      }
+
+      .product strong {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <section id="lock-view" class="card">
+      <form id="unlock-form">
+        <label for="password">Enter access password</label>
+        <input id="password" type="password" autocomplete="current-password">
+        <button id="unlock-button" type="submit">Unlock</button>
+      </form>
+      <div id="lock-status" class="status" role="status"></div>
+    </section>
+
+    <section id="tools-view" class="hidden">
+      <h1>AM eBay Listing Assistant</h1>
+      <p>Prepare AliExpress product data and fill eBay AU listing forms.</p>
+
+      <button id="scrape-button" type="button">Scrape Current Product</button>
+      <button id="open-editor-button" class="secondary" type="button">Open Editor</button>
+      <button id="list-button" class="warning" type="button">List It</button>
+
+      <div id="product-summary" class="product hidden">
+        <strong id="product-title"></strong>
+        <span id="product-meta"></span>
+      </div>
+
+      <button id="lock-button" class="secondary" type="button">Lock</button>
+      <div id="status" class="status" role="status"></div>
+    </section>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AM eBay Listing Assistant Editor</title>
+    <style>
+      :root {
+        --brand: #123f8c;
+        --accent: #f3a51b;
+        --bg: #f6f8fb;
+        --border: #d8dee8;
+        --danger: #b42318;
+        --muted: #667085;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: #101828;
+        font: 14px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px 24px;
+        color: #fff;
+        background: var(--brand);
+        box-shadow: 0 4px 16px rgb(16 24 40 / 12%);
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 20px;
+      }
+
+      main {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      label {
+        display: block;
+        margin: 0 0 6px;
+        font-weight: 650;
+      }
+
+      input,
+      textarea,
+      select,
+      button {
+        border-radius: 8px;
+        font: inherit;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 9px 10px;
+        border: 1px solid var(--border);
+        background: #fff;
+      }
+
+      textarea {
+        min-height: 180px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      button {
+        padding: 10px 14px;
+        border: 0;
+        color: #fff;
+        background: var(--brand);
+        cursor: pointer;
+        font-weight: 650;
+      }
+
+      button.secondary {
+        color: #101828;
+        border: 1px solid var(--border);
+        background: #fff;
+      }
+
+      button.warning {
+        color: #101828;
+        background: var(--accent);
+      }
+
+      button.danger {
+        background: var(--danger);
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.65;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .lock {
+        max-width: 420px;
+        margin: 12vh auto 0;
+        padding: 20px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: #fff;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 16px;
+      }
+
+      .card {
+        margin-bottom: 16px;
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: #fff;
+      }
+
+      .span-4 {
+        grid-column: span 4;
+      }
+
+      .span-6 {
+        grid-column: span 6;
+      }
+
+      .span-8 {
+        grid-column: span 8;
+      }
+
+      .span-12 {
+        grid-column: span 12;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .status {
+        min-height: 20px;
+        color: var(--muted);
+        white-space: pre-wrap;
+      }
+
+      .image-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+      }
+
+      .image-card {
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #fff;
+      }
+
+      .image-card img {
+        display: block;
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        background: #eef2f6;
+      }
+
+      .image-card label {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 8px;
+        font-weight: 500;
+      }
+
+      .image-card input {
+        width: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 8px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+
+      th {
+        color: #344054;
+        font-size: 12px;
+        text-align: left;
+        text-transform: uppercase;
+        background: #f8fafc;
+      }
+
+      td input,
+      td select {
+        min-width: 120px;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+
+      @media (max-width: 900px) {
+        .span-4,
+        .span-6,
+        .span-8,
+        .span-12 {
+          grid-column: span 12;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section id="lock-view" class="lock">
+      <form id="unlock-form">
+        <label for="password">Enter access password</label>
+        <input id="password" type="password" autocomplete="current-password">
+        <button id="unlock-button" type="submit">Unlock</button>
+      </form>
+      <div id="lock-status" class="status" role="status"></div>
+    </section>
+
+    <section id="editor-view" class="hidden">
+      <header>
+        <h1>AM eBay Listing Assistant</h1>
+        <div class="actions">
+          <button id="save-button" type="button">Save</button>
+          <button id="list-button" class="warning" type="button">List It</button>
+          <button id="lock-button" class="secondary" type="button">Lock</button>
+        </div>
+      </header>
+
+      <main>
+        <div class="card actions">
+          <button id="copy-title-button" class="secondary" type="button">Copy Title</button>
+          <button id="copy-description-button" class="secondary" type="button">Copy Description</button>
+          <button id="copy-variants-button" class="secondary" type="button">Copy Variants</button>
+          <button id="export-csv-button" class="secondary" type="button">Export CSV</button>
+          <button id="import-sheet-button" class="secondary" type="button">Import CSV/JSON</button>
+          <input id="import-sheet-file" class="hidden" type="file" accept=".csv,.json,application/json,text/csv">
+          <span id="status" class="status" role="status"></span>
+        </div>
+
+        <section class="grid">
+          <div class="card span-8">
+            <label for="title">Title</label>
+            <input id="title" maxlength="80">
+          </div>
+          <div class="card span-4">
+            <label for="sku-prefix">SKU Prefix</label>
+            <input id="sku-prefix">
+          </div>
+          <div class="card span-4">
+            <label for="price">Price</label>
+            <input id="price" inputmode="decimal">
+          </div>
+          <div class="card span-4">
+            <label for="quantity">Quantity</label>
+            <input id="quantity" inputmode="numeric">
+          </div>
+          <div class="card span-4">
+            <label for="markup">Manual Markup %</label>
+            <div class="actions">
+              <input id="markup" inputmode="decimal" value="0">
+              <button id="apply-markup-button" type="button">Apply Markup</button>
+            </div>
+          </div>
+          <div class="card span-12">
+            <label for="category-hints">Category Hints</label>
+            <input id="category-hints" placeholder="Comma-separated category hints">
+          </div>
+          <div class="card span-12">
+            <label for="description">Description HTML</label>
+            <textarea id="description"></textarea>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Product Images</h2>
+          <div id="images" class="image-grid"></div>
+        </section>
+
+        <section class="card">
+          <div class="actions">
+            <h2>Item Specifics</h2>
+            <button id="add-specific-button" class="secondary" type="button">Add Specific</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Value</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="specifics"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="actions">
+            <h2>Variations</h2>
+            <button id="add-variation-button" class="secondary" type="button">Add Variation</button>
+          </div>
+          <div id="dimension-editor" class="actions"></div>
+          <div class="table-wrap">
+            <table>
+              <thead id="variation-head"></thead>
+              <tbody id="variations"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </section>
+
+    <script src="editor.js"></script>
+  </body>
+</html>

@@ -1,0 +1,71 @@
+{
+  "manifest_version": 3,
+  "name": "AM eBay Listing Assistant",
+  "description": "Browser assistant for preparing AliExpress or sheet product data and filling eBay AU listing forms.",
+  "version": "0.1.0",
+  "action": {
+    "default_title": "AM eBay Listing Assistant",
+    "default_popup": "pages/popup.html"
+  },
+  "background": {
+    "service_worker": "src/background/service-worker.js"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "scripting",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://*.aliexpress.com/*",
+    "https://*.aliexpress.us/*",
+    "https://*.ebay.com.au/*",
+    "https://*.ebay.com/*",
+    "https://ae-pic-a1.aliexpress-media.com/*",
+    "https://ae01.alicdn.com/*"
+  ],
+  "icons": {
+    "16": "assets/icon.png",
+    "48": "assets/icon.png",
+    "128": "assets/icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.aliexpress.com/*",
+        "https://*.aliexpress.us/*"
+      ],
+      "js": [
+        "src/content/aliexpress-scraper.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://*.ebay.com.au/*",
+        "https://*.ebay.com/*"
+      ],
+      "js": [
+        "src/content/ebay-autofill.js",
+        "src/content/ebay-variation-watcher.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "pages/editor.html",
+        "assets/icon.png"
+      ],
+      "matches": [
+        "https://*.aliexpress.com/*",
+        "https://*.aliexpress.us/*",
+        "https://*.ebay.com.au/*",
+        "https://*.ebay.com/*"
+      ]
+    }
+  ]
+}
