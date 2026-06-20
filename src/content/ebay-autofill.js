@@ -576,18 +576,41 @@
   }
 
   async function remoteImageToFile(url, index) {
-    const response = await fetch(url, {
-      mode: "cors",
-      credentials: "omit",
-      cache: "force-cache"
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const blob = await response.blob();
+    let blob;
+    try {
+      const response = await fetch(url, {
+        mode: "cors",
+        credentials: "omit",
+        cache: "force-cache"
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      blob = await response.blob();
+    } catch (error) {
+      log(`Content fetch blocked or failed; trying extension fetch fallback for image ${index}.`);
+      const fallback = await sendMessage({ type: "FETCH_IMAGE_AS_DATA_URL", url });
+      if (!fallback.ok || !fallback.dataUrl) {
+        throw new Error(fallback.error || error.message || "Image fetch fallback failed.");
+      }
+      blob = dataUrlToBlob(fallback.dataUrl, fallback.contentType);
+    }
     const extension = mimeToExtension(blob.type) || extensionFromUrl(url) || "jpg";
     return new File([blob], `am-ebay-image-${index}.${extension}`, {
       type: blob.type || `image/${extension === "jpg" ? "jpeg" : extension}`,
       lastModified: Date.now()
     });
+  }
+
+  function dataUrlToBlob(dataUrl, contentType) {
+    const parts = String(dataUrl).split(",");
+    const header = parts[0] || "";
+    const body = parts[1] || "";
+    const mime = contentType || header.match(/data:([^;]+)/)?.[1] || "image/jpeg";
+    const binary = atob(body);
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) {
+      bytes[index] = binary.charCodeAt(index);
+    }
+    return new Blob([bytes], { type: mime });
   }
 
   function mimeToExtension(type) {

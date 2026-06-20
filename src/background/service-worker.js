@@ -79,6 +79,9 @@ async function handleMessage(message, sender) {
         version: chrome.runtime.getManifest().version,
         name: chrome.runtime.getManifest().name
       };
+    case "FETCH_IMAGE_AS_DATA_URL":
+      await requireUnlocked();
+      return fetchImageAsDataUrl(message.url);
     default:
       return { ok: false, error: `Unknown message type: ${message.type}` };
   }
@@ -175,4 +178,33 @@ async function openEditor() {
 async function openEbayListing() {
   const tab = await chrome.tabs.create({ url: ownerConfig.ebayListingUrl });
   return { ok: true, tabId: tab.id };
+}
+
+async function fetchImageAsDataUrl(url) {
+  if (!/^https:\/\/(ae-pic-a1\.aliexpress-media\.com|ae01\.alicdn\.com|[^/]*\.aliexpress\.(com|us))\//i.test(url || "")) {
+    throw new Error("Image host is not allowed.");
+  }
+
+  const response = await fetch(url, {
+    credentials: "omit",
+    cache: "force-cache"
+  });
+  if (!response.ok) {
+    throw new Error(`Image fetch failed with HTTP ${response.status}.`);
+  }
+
+  const contentType = response.headers.get("content-type") || "image/jpeg";
+  const buffer = await response.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  const chunkSize = 0x8000;
+  for (let index = 0; index < bytes.length; index += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
+  }
+
+  return {
+    ok: true,
+    dataUrl: `data:${contentType};base64,${btoa(binary)}`,
+    contentType
+  };
 }
