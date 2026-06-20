@@ -6,14 +6,19 @@
     <title>AM eBay Listing Assistant Editor</title>
     <style>
       :root {
+        color-scheme: dark;
         font-family: Arial, Helvetica, sans-serif;
-        --blue: #1d4ed8;
-        --green: #15803d;
-        --red: #b42318;
-        --dark: #172033;
-        --muted: #667085;
-        --border: #d0d5dd;
-        --surface: #f8fafc;
+        --bg: #070a12;
+        --panel: rgba(15, 23, 42, 0.92);
+        --panel-2: rgba(30, 41, 59, 0.74);
+        --blue: #60a5fa;
+        --blue-2: #2563eb;
+        --green: #22c55e;
+        --red: #fb7185;
+        --text: #f8fafc;
+        --muted: #94a3b8;
+        --border: rgba(148, 163, 184, 0.2);
+        --surface: rgba(15, 23, 42, 0.62);
       }
 
       * {
@@ -22,8 +27,12 @@
 
       body {
         margin: 0;
-        color: var(--dark);
-        background: #eef2f7;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 12% -8%, rgba(37, 99, 235, 0.32), transparent 30%),
+          radial-gradient(circle at 90% 4%, rgba(34, 197, 94, 0.13), transparent 28%),
+          linear-gradient(180deg, #070a12 0%, #0f172a 100%);
+        min-height: 100vh;
       }
 
       header {
@@ -34,9 +43,10 @@
         align-items: center;
         justify-content: space-between;
         gap: 16px;
-        padding: 14px 20px;
+        padding: 16px 22px;
         border-bottom: 1px solid var(--border);
-        background: white;
+        background: rgba(7, 10, 18, 0.82);
+        backdrop-filter: blur(18px);
       }
 
       h1,
@@ -45,11 +55,13 @@
       }
 
       h1 {
-        font-size: 20px;
+        font-size: 22px;
+        letter-spacing: -0.04em;
       }
 
       h2 {
-        font-size: 16px;
+        font-size: 17px;
+        letter-spacing: -0.025em;
       }
 
       .screen {
@@ -64,9 +76,10 @@
         width: min(420px, calc(100% - 32px));
         margin: 80px auto;
         padding: 20px;
-        border-radius: 16px;
-        background: white;
-        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: var(--panel);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
       }
 
       .lock-form {
@@ -79,14 +92,15 @@
       main {
         display: grid;
         gap: 16px;
-        padding: 20px;
+        padding: 22px;
       }
 
       .card {
-        padding: 16px;
+        padding: 18px;
         border: 1px solid var(--border);
-        border-radius: 14px;
-        background: white;
+        border-radius: 20px;
+        background: var(--panel);
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
       }
 
       .grid {
@@ -107,6 +121,7 @@
         gap: 6px;
         font-size: 13px;
         font-weight: 700;
+        color: var(--muted);
       }
 
       input,
@@ -120,10 +135,19 @@
       textarea,
       select {
         width: 100%;
-        padding: 9px 10px;
+        padding: 10px 12px;
         border: 1px solid var(--border);
-        border-radius: 8px;
-        background: white;
+        border-radius: 12px;
+        color: var(--text);
+        background: rgba(2, 6, 23, 0.62);
+        outline: none;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        border-color: rgba(96, 165, 250, 0.9);
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
       }
 
       textarea {
@@ -135,25 +159,28 @@
       button {
         cursor: pointer;
         border: 0;
-        border-radius: 8px;
-        background: var(--blue);
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--blue-2), #7c3aed);
         color: white;
-        padding: 9px 12px;
+        padding: 10px 13px;
         font-weight: 700;
+        box-shadow: 0 12px 26px rgba(37, 99, 235, 0.22);
       }
 
       button.secondary {
-        background: #eef2ff;
-        color: #1e3a8a;
+        background: rgba(96, 165, 250, 0.12);
+        color: #bfdbfe;
+        box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.22);
       }
 
       button.success {
-        background: var(--green);
+        background: linear-gradient(135deg, #16a34a, #22c55e);
       }
 
       button.danger {
-        background: #fee4e2;
+        background: rgba(251, 113, 133, 0.12);
         color: var(--red);
+        box-shadow: inset 0 0 0 1px rgba(251, 113, 133, 0.24);
       }
 
       button.icon {
@@ -178,16 +205,16 @@
         gap: 6px;
         padding: 8px;
         border: 1px solid var(--border);
-        border-radius: 12px;
-        background: var(--surface);
+        border-radius: 16px;
+        background: var(--panel-2);
       }
 
       .image-card img {
         width: 100%;
         height: 110px;
         object-fit: cover;
-        border-radius: 8px;
-        background: #e5e7eb;
+        border-radius: 12px;
+        background: #111827;
       }
 
       table {
@@ -199,13 +226,14 @@
       th,
       td {
         padding: 8px;
-        border-bottom: 1px solid #e4e7ec;
+        border-bottom: 1px solid var(--border);
         text-align: left;
         vertical-align: top;
       }
 
       th {
         background: var(--surface);
+        color: #cbd5e1;
       }
 
       td input {
@@ -279,9 +307,15 @@
               <input id="category-hints">
             </label>
             <label>
+              eBay region
+              <select id="region"></select>
+            </label>
+            <label>
               Manual markup %
               <input id="markup-percent" type="number" step="0.01" value="0">
             </label>
+          </div>
+          <div class="grid three">
             <label>
               Condition
               <select id="condition">

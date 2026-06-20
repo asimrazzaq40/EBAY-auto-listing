@@ -65,6 +65,7 @@
       price: product.price || "",
       quantity: Number(product.quantity || 1),
       skuPrefix: product.skuPrefix || "AX",
+      ebayRegion: product.ebayRegion || "",
       condition: product.condition || "New",
       specifications: product.specifications || {},
       images: (product.images || []).map((image) => typeof image === "string" ? { url: image, selected: true } : image).filter((image) => image.url),
@@ -97,11 +98,14 @@
           flex-direction: column;
           gap: 8px;
           padding: 12px;
-          border: 1px solid #d0d5dd;
-          border-radius: 14px;
-          background: #fff;
-          color: #172033;
-          box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
+          border: 1px solid rgba(148, 163, 184, 0.22);
+          border-radius: 18px;
+          background:
+            radial-gradient(circle at 16% 0%, rgba(37, 99, 235, 0.25), transparent 34%),
+            rgba(7, 10, 18, 0.94);
+          color: #f8fafc;
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
+          backdrop-filter: blur(16px);
           font: 13px Arial, Helvetica, sans-serif;
         }
         #am-ebay-panel * { box-sizing: border-box; }
@@ -111,7 +115,7 @@
           line-height: 1.25;
         }
         #am-ebay-panel .ame-title {
-          color: #667085;
+          color: #94a3b8;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -125,27 +129,31 @@
           min-height: 32px;
           cursor: pointer;
           border: 0;
-          border-radius: 8px;
-          background: #1d4ed8;
+          border-radius: 11px;
+          background: linear-gradient(135deg, #2563eb, #7c3aed);
           color: white;
           padding: 7px 8px;
           font: 700 12px Arial, Helvetica, sans-serif;
+          box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
         }
         #am-ebay-panel button.secondary {
-          background: #eef2ff;
-          color: #1e3a8a;
+          background: rgba(96, 165, 250, 0.12);
+          color: #bfdbfe;
+          box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.22);
         }
         #am-ebay-panel button.danger {
-          background: #fee4e2;
-          color: #b42318;
+          background: rgba(251, 113, 133, 0.12);
+          color: #fb7185;
+          box-shadow: inset 0 0 0 1px rgba(251, 113, 133, 0.24);
         }
         #am-ebay-panel .ame-log {
           min-height: 140px;
           max-height: 280px;
           overflow: auto;
           padding: 8px;
-          border-radius: 8px;
-          background: #0f172a;
+          border: 1px solid rgba(148, 163, 184, 0.16);
+          border-radius: 12px;
+          background: rgba(2, 6, 23, 0.78);
           color: #dbeafe;
           white-space: pre-wrap;
           font: 11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -953,6 +961,7 @@
       currentUrl: location.href,
       extensionVersion: state.version,
       productTitle: state.product?.title || "",
+      ebayRegion: state.product?.ebayRegion || "",
       scrapedPrice: state.product?.price || "",
       imagesCount: state.product?.images?.length || 0,
       variationsCount: state.product?.variations?.length || 0,

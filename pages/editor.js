@@ -1,6 +1,8 @@
 let product = null;
 let defaults = {};
 let dimensions = [];
+let ebayRegions = [];
+let selectedRegion = "au";
 
 const lockScreen = document.getElementById("lock-screen");
 const editorScreen = document.getElementById("editor-screen");
@@ -16,6 +18,7 @@ const fields = {
   quantity: document.getElementById("quantity"),
   skuPrefix: document.getElementById("sku-prefix"),
   categoryHints: document.getElementById("category-hints"),
+  region: document.getElementById("region"),
   markupPercent: document.getElementById("markup-percent"),
   condition: document.getElementById("condition")
 };
@@ -28,6 +31,7 @@ document.getElementById("copy-title-btn").addEventListener("click", () => copyTe
 document.getElementById("copy-description-btn").addEventListener("click", () => copyText(fields.description.value, "Description copied."));
 document.getElementById("copy-variants-btn").addEventListener("click", () => copyText(buildVariationTsv(), "Variants copied as TSV."));
 document.getElementById("export-csv-btn").addEventListener("click", exportCsv);
+fields.region.addEventListener("change", saveSelectedRegion);
 
 lockForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -75,6 +79,8 @@ async function loadProduct() {
     return;
   }
   defaults = response.defaults || {};
+  ebayRegions = response.ebayRegions || [];
+  selectedRegion = response.selectedRegion || defaults.ebayRegion || "au";
   product = normalizeProduct(response.product || {});
   renderProduct();
 }
@@ -90,6 +96,7 @@ function normalizeProduct(raw) {
     currency: raw.currency || "",
     quantity: Number(raw.quantity || defaults.quantity || 5),
     skuPrefix: raw.skuPrefix || defaults.skuPrefix || "AX",
+    ebayRegion: raw.ebayRegion || selectedRegion || defaults.ebayRegion || "au",
     categoryHints: Array.isArray(raw.categoryHints) ? raw.categoryHints : [],
     condition: raw.condition || defaults.condition || "New",
     specifications: raw.specifications || {},
@@ -143,17 +150,29 @@ function normalizeDimensions(input) {
 }
 
 function renderProduct() {
+  renderRegions();
   fields.title.value = product.title;
   fields.description.value = product.descriptionHtml;
   fields.price.value = product.price;
   fields.quantity.value = product.quantity;
   fields.skuPrefix.value = product.skuPrefix;
+  fields.region.value = product.ebayRegion || selectedRegion;
   fields.categoryHints.value = product.categoryHints.join(", ");
   fields.condition.value = product.condition;
   renderImages();
   renderSpecifics();
   renderVariations();
   setStatus("Loaded product data.");
+}
+
+function renderRegions() {
+  fields.region.textContent = "";
+  (ebayRegions.length ? ebayRegions : [{ code: selectedRegion, label: selectedRegion.toUpperCase(), domain: "" }]).forEach((region) => {
+    const option = document.createElement("option");
+    option.value = region.code;
+    option.textContent = region.domain ? `${region.label} (${region.domain})` : region.label;
+    fields.region.appendChild(option);
+  });
 }
 
 function renderImages() {
@@ -298,6 +317,7 @@ function collectProduct() {
   product.price = fields.price.value.trim();
   product.quantity = Number(fields.quantity.value || 0);
   product.skuPrefix = fields.skuPrefix.value.trim() || "AX";
+  product.ebayRegion = fields.region.value || selectedRegion || "au";
   product.categoryHints = fields.categoryHints.value.split(",").map((hint) => hint.trim()).filter(Boolean);
   product.condition = fields.condition.value;
   product.specifications = specifics;
@@ -331,8 +351,22 @@ function applyMarkup() {
 
 async function listIt() {
   await saveProduct();
-  const response = await sendMessage({ type: "OPEN_EBAY_LISTING", product });
-  setStatus(response.ok ? "Opened eBay AU listing page." : response.error || "Could not open eBay.");
+  const response = await sendMessage({
+    type: "OPEN_EBAY_LISTING",
+    product,
+    region: product.ebayRegion
+  });
+  setStatus(response.ok ? `Opened eBay ${response.region.label} listing page.` : response.error || "Could not open eBay.");
+}
+
+async function saveSelectedRegion() {
+  selectedRegion = fields.region.value;
+  if (product) product.ebayRegion = selectedRegion;
+  const response = await sendMessage({
+    type: "SET_EBAY_REGION",
+    region: selectedRegion
+  });
+  setStatus(response.ok ? `Region set to ${response.region.label}.` : response.error || "Could not save region.");
 }
 
 function buildVariationTsv() {

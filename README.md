@@ -1,8 +1,8 @@
 # AM eBay Listing Assistant
 
-Chrome Extension Manifest V3 assistant for semi-automated product listing from AliExpress product pages to the eBay AU listing form.
+Chrome Extension Manifest V3 assistant for semi-automated product listing from AliExpress product pages to regional eBay listing forms.
 
-This MVP does **not** use the official eBay API. It works as a browser form-filling assistant that helps scrape/import product data, review listing data, open eBay AU selling pages, upload images, fill listing fields, and assist with variation creation. The final eBay listing submission remains manual.
+This MVP does **not** use the official eBay API. It works as a browser form-filling assistant that helps scrape/import product data, review listing data, open the selected regional eBay selling page, upload images, fill listing fields, and assist with variation creation. The final eBay listing submission remains manual.
 
 ## Safety boundaries
 
@@ -47,18 +47,20 @@ README.md
 2. Open the extension popup.
 3. Enter the access password.
 4. Click **Scrape Current Product**.
-5. Review and edit listing data in the editor:
+5. Choose the eBay region in the popup or editor.
+6. Review and edit listing data in the editor:
    - Title
    - Description
    - Price
    - Quantity
    - SKU prefix
+   - eBay region
    - Category hints
    - Item specifics
    - Product images
    - Variations
-6. Click **List It**.
-7. On eBay AU, use the floating assistant panel:
+7. Click **List It**.
+8. On the selected eBay region, use the floating assistant panel:
    - **Auto Start**
    - **Fill Now**
    - **Set Buy It Now**
@@ -68,7 +70,20 @@ README.md
    - **Copy Description**
    - **Copy Variants**
    - **Debug Fields**
-8. Review the eBay listing manually and submit only when satisfied.
+9. Review the eBay listing manually and submit only when satisfied.
+
+## Supported eBay regions
+
+The listing destination can be selected from the popup or editor:
+
+- Australia
+- United States
+- United Kingdom
+- Canada
+- Germany
+- France
+- Italy
+- Spain
 
 ## eBay variation support
 

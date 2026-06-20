@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "AM eBay Listing Assistant",
   "version": "0.1.0",
-  "description": "Browser-based assistant for preparing AliExpress or sheet product data for manual eBay AU listings.",
+  "description": "Browser-based assistant for preparing AliExpress or sheet product data for manual eBay listings.",
   "action": {
     "default_title": "AM eBay Listing Assistant",
     "default_popup": "pages/popup.html"
@@ -22,6 +22,12 @@
     "https://*.aliexpress.us/*",
     "https://*.ebay.com.au/*",
     "https://*.ebay.com/*",
+    "https://*.ebay.co.uk/*",
+    "https://*.ebay.ca/*",
+    "https://*.ebay.de/*",
+    "https://*.ebay.fr/*",
+    "https://*.ebay.it/*",
+    "https://*.ebay.es/*",
     "https://ae-pic-a1.aliexpress-media.com/*",
     "https://ae01.alicdn.com/*"
   ],
@@ -39,7 +45,13 @@
     {
       "matches": [
         "https://*.ebay.com.au/*",
-        "https://*.ebay.com/*"
+        "https://*.ebay.com/*",
+        "https://*.ebay.co.uk/*",
+        "https://*.ebay.ca/*",
+        "https://*.ebay.de/*",
+        "https://*.ebay.fr/*",
+        "https://*.ebay.it/*",
+        "https://*.ebay.es/*"
       ],
       "js": [
         "src/content/ebay-autofill.js",

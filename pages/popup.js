@@ -6,11 +6,13 @@ const lockStatus = document.getElementById("lock-status");
 const statusEl = document.getElementById("status");
 const productTitleEl = document.getElementById("product-title");
 const productSummaryEl = document.getElementById("product-summary");
+const regionSelect = document.getElementById("region-select");
 
 document.getElementById("scrape-btn").addEventListener("click", scrapeProduct);
 document.getElementById("editor-btn").addEventListener("click", openEditor);
 document.getElementById("list-btn").addEventListener("click", listIt);
 document.getElementById("lock-btn").addEventListener("click", lock);
+regionSelect.addEventListener("change", saveRegion);
 
 lockForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -55,6 +57,7 @@ async function showTools() {
 
 async function refreshProductSummary() {
   const response = await sendMessage({ type: "GET_PRODUCT" });
+  renderRegions(response.ebayRegions || [], response.selectedRegion);
   if (!response.ok || !response.product) {
     productTitleEl.textContent = "No product loaded";
     productSummaryEl.textContent = "Open an AliExpress product page and scrape it.";
@@ -66,8 +69,39 @@ async function refreshProductSummary() {
   productSummaryEl.textContent = [
     `${(product.images || []).length} images`,
     `${(product.variations || []).length} variations`,
-    `${Object.keys(product.specifications || {}).length} specs`
+    `${Object.keys(product.specifications || {}).length} specs`,
+    `region: ${selectedRegionLabel(response.ebayRegions || [], response.selectedRegion)}`
   ].join(" | ");
+}
+
+function renderRegions(regions, selectedRegion) {
+  if (!regions.length) return;
+  const current = regionSelect.value || selectedRegion;
+  regionSelect.textContent = "";
+  regions.forEach((region) => {
+    const option = document.createElement("option");
+    option.value = region.code;
+    option.textContent = `${region.label} (${region.domain})`;
+    regionSelect.appendChild(option);
+  });
+  regionSelect.value = selectedRegion || current || regions[0].code;
+}
+
+function selectedRegionLabel(regions, selectedRegion) {
+  const region = regions.find((candidate) => candidate.code === selectedRegion);
+  return region ? region.label : selectedRegion || "default";
+}
+
+async function saveRegion() {
+  const response = await sendMessage({
+    type: "SET_EBAY_REGION",
+    region: regionSelect.value
+  });
+  if (response.ok) {
+    setStatus(`Region set to ${response.region.label}.`);
+  } else {
+    setStatus(response.error || "Could not save region.");
+  }
 }
 
 async function scrapeProduct() {
@@ -95,9 +129,13 @@ async function listIt() {
   }
   const response = await sendMessage({
     type: "OPEN_EBAY_LISTING",
-    product: productResponse.product
+    product: {
+      ...productResponse.product,
+      ebayRegion: regionSelect.value
+    },
+    region: regionSelect.value
   });
-  setStatus(response.ok ? "Opened eBay AU listing page." : response.error || "Could not open eBay.");
+  setStatus(response.ok ? `Opened eBay ${response.region.label} listing page.` : response.error || "Could not open eBay.");
 }
 
 async function lock() {
