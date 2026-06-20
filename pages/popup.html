@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AM eBay Listing Assistant</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        min-width: 340px;
+        background: #0f172a;
+        color: #e2e8f0;
+      }
+
+      .wrap {
+        padding: 16px;
+      }
+
+      .card {
+        background: rgba(15, 23, 42, 0.96);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.4);
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+
+      p {
+        margin: 0 0 12px;
+        color: #cbd5e1;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      label {
+        display: block;
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+
+      input,
+      button {
+        width: 100%;
+        box-sizing: border-box;
+        border-radius: 10px;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        font-size: 14px;
+      }
+
+      input {
+        background: #020617;
+        color: #e2e8f0;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+      }
+
+      button {
+        cursor: pointer;
+        padding: 10px 12px;
+        font-weight: 600;
+        color: #0f172a;
+        background: #38bdf8;
+        margin-top: 8px;
+      }
+
+      button.secondary {
+        color: #e2e8f0;
+        background: rgba(30, 41, 59, 0.9);
+      }
+
+      button.ghost {
+        color: #cbd5e1;
+        background: transparent;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .status {
+        min-height: 38px;
+        font-size: 12px;
+        color: #93c5fd;
+        white-space: pre-wrap;
+      }
+
+      .title-chip {
+        font-size: 12px;
+        color: #f8fafc;
+        background: rgba(15, 118, 110, 0.3);
+        border: 1px solid rgba(45, 212, 191, 0.3);
+        border-radius: 999px;
+        padding: 8px 10px;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div id="lockCard" class="card">
+        <h1>AM eBay Listing Assistant</h1>
+        <label for="passwordInput">Enter access password</label>
+        <input id="passwordInput" type="password" autocomplete="current-password">
+        <button id="unlockButton" type="button">Unlock</button>
+        <div id="lockStatus" class="status"></div>
+      </div>
+
+      <div id="appCard" class="card hidden">
+        <h1>AM eBay Listing Assistant</h1>
+        <div id="draftTitle" class="title-chip hidden"></div>
+        <p>Scrape the current AliExpress product, review it in the internal editor, then open the eBay AU listing flow.</p>
+        <button id="scrapeButton" type="button">Scrape Current Product</button>
+        <button id="editorButton" class="secondary" type="button">Open Editor</button>
+        <button id="listingButton" class="secondary" type="button">Open eBay Listing</button>
+        <button id="logoutButton" class="ghost" type="button">Lock</button>
+        <div id="appStatus" class="status"></div>
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
